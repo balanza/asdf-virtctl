@@ -2,8 +2,7 @@
 
 set -euo pipefail
 
-# TODO: Ensure this is the correct GitHub homepage where releases can be downloaded for virtctl.
-GH_REPO="https://github.com/balanza/virtctl"
+GH_REPO="https://github.com/kubevirt/kubevirt"
 TOOL_NAME="virtctl"
 TOOL_TEST="virtctl --help"
 
@@ -31,18 +30,16 @@ list_github_tags() {
 }
 
 list_all_versions() {
-	# TODO: Adapt this. By default we simply list the tag names from GitHub releases.
-	# Change this function if virtctl has other means of determining installable versions.
 	list_github_tags
 }
 
 download_release() {
-	local version filename url
+	local version filename url arch
 	version="$1"
+	arch="$(uname -s | tr A-Z a-z)-$(uname -m | sed 's/x86_64/amd64/')"
 	filename="$2"
 
-	# TODO: Adapt the release URL convention for virtctl
-	url="$GH_REPO/archive/v${version}.tar.gz"
+	url="$GH_REPO/releases/download/v$version/virtctl-$version-$arch"
 
 	echo "* Downloading $TOOL_NAME release $version..."
 	curl "${curl_opts[@]}" -o "$filename" -C - "$url" || fail "Could not download $url"
