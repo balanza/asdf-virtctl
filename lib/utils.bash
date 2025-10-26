@@ -36,12 +36,15 @@ list_all_versions() {
 download_release() {
 	local version filename url arch
 	version="$1"
-	arch="$(uname -s | tr A-Z a-z)-$(uname -m | sed 's/x86_64/amd64/')"
+	#arch="$(uname -s | tr A-Z a-z)-$(uname -m | sed 's/x86_64/amd64/')"
+	arch="$(uname -s | tr '[:upper:]' '[:lower:]')-$(uname -m | sed 's/x86_64/amd64/')"
 	filename="$2"
 
-	url="$GH_REPO/releases/download/v$version/virtctl-$version-$arch"
+	url="$GH_REPO/releases/download/v$version/virtctl-v$version-$arch"
 
 	echo "* Downloading $TOOL_NAME release $version..."
+	echo "    artifact url: '$url'"
+	echo "    destination path: '$filename'"
 	curl "${curl_opts[@]}" -o "$filename" -C - "$url" || fail "Could not download $url"
 }
 
@@ -56,7 +59,12 @@ install_version() {
 
 	(
 		mkdir -p "$install_path"
-		cp -r "$ASDF_DOWNLOAD_PATH"/* "$install_path"
+		echo "* Installing $TOOL_NAME release $version..."
+		echo "    installation path: '$install_path'"
+		echo "    download directory: '$ASDF_DOWNLOAD_PATH'"
+
+		cp "$ASDF_DOWNLOAD_PATH/$TOOL_NAME" "$install_path/$TOOL_NAME"
+		chmod +x "$install_path/$TOOL_NAME"
 
 		# TODO: Assert virtctl executable exists.
 		local tool_cmd
