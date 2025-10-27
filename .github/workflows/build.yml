@@ -22,4 +22,5 @@ jobs:
         with:
           command: virtctl --help
           gitref: main
+          version: 1.6.0
 
